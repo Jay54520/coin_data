@@ -66,10 +66,10 @@ class Coin:
 
 class AbstractDataSource:
 
-    def symbols(self) -> List[str]:
-        """返回支持的加密货币列表"""
+    def coin_ids(self) -> List[str]:
+        """返回支持的加密货币 ID 列表"""
         raise NotImplementedError
 
-    def historical_data(self, symbol: str, start_day: datetime.datetime, end_day: datetime.datetime) -> List[Coin]:
-        """返回 symbol 在 [start_day, end_day] 的数据"""
+    def historical_data(self, coin_id: str, start_day: datetime.datetime, end_day: datetime.datetime) -> List[Coin]:
+        """返回 coin_id 对应的 coin 在 [start_day, end_day] 的数据"""
         raise NotImplementedError
