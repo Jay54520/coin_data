@@ -2,6 +2,7 @@
 
 import datetime
 import decimal
+import json
 import requests
 from bs4 import BeautifulSoup
 from typing import List, Dict
@@ -13,9 +14,17 @@ class CoinMarketCap(AbstractDataSource):
     QUERY_TIME_FORMAT = '%Y%m%d'
 
     @classmethod
-    def historical_data(cls, name: str, start_day: datetime.datetime, end_day: datetime.datetime) -> List[Coin]:
-        """返回 name 在 [start_day, end_day] 的数据"""
-        historical_data = cls._scrape_historical_data(name, start_day, end_day)
+    def coin_ids(self) -> List[str]:
+        coin_ids = []
+        response = requests.get('https://api.coinmarketcap.com/v2/listings/')
+        coins = json.loads(response.content)
+        for coin_dict in coins['data']:
+            coin_ids.append(coin_dict['website_slug'])
+        return coin_ids
+
+    @classmethod
+    def historical_data(cls, coin_id: str, start_day: datetime.datetime, end_day: datetime.datetime) -> List[Coin]:
+        historical_data = cls._scrape_historical_data(coin_id, start_day, end_day)
         return historical_data
 
     @classmethod
@@ -82,3 +91,4 @@ class CoinMarketCap(AbstractDataSource):
 
 if __name__ == '__main__':
     print(CoinMarketCap._scrape_historical_data('ethereum', datetime.datetime(2018, 1, 1), datetime.datetime(2018, 1, 3)))
+    print(CoinMarketCap.coin_ids())
