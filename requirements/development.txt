@@ -1,0 +1,2 @@
+-r ./production.txt
+twine==1.11.0
