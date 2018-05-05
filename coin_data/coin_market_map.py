@@ -86,6 +86,9 @@ class CoinMarketCap(AbstractDataSource):
 
     @classmethod
     def _clean_num(cls, num_str: str) -> decimal.Decimal:
+        # 猜测表示数据不存在，比如 https://coinmarketcap.com/currencies/elacoin/historical-data/?start=20180101&end=20180103
+        if num_str == '-':
+            return decimal.Decimal(-1)
         return decimal.Decimal(num_str.replace(',', ''))
 
 
