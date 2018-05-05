@@ -60,6 +60,8 @@ class CoinMarketCap(AbstractDataSource):
         tag_tbody = id_historical_data.find('tbody')
         for tag_tr in tag_tbody.find_all('tr'):
             row = [tag_td.text for tag_td in tag_tr.find_all('td')]
+            if 'No data' in row[0]:
+                return result
             partial_data = cls._parse_row(row)
             result.append(partial_data)
         return result
@@ -93,5 +95,5 @@ class CoinMarketCap(AbstractDataSource):
 
 
 if __name__ == '__main__':
-    print(CoinMarketCap._scrape_historical_data('ethereum', datetime.datetime(2018, 1, 1), datetime.datetime(2018, 1, 3)))
+    print(CoinMarketCap._scrape_historical_data('grandcoin', datetime.datetime(2018, 1, 1), datetime.datetime(2018, 1, 3)))
     print(CoinMarketCap.coin_ids())
