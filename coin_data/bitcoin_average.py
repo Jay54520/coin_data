@@ -1,31 +1,27 @@
 # -*- coding: utf-8 -*-
-import os
-
-import decimal
 
 import datetime
+import decimal
 from bitcoinaverage import RestfulClient
 from typing import List
 
-from base import AbstractDataSource, Symbol
+from coin_data.base import AbstractDataSource, Symbol
 
 
 class BitcoinAverage(AbstractDataSource):
-    secret_key = os.environ['BITCOIN_AVERAGE_SECRET_KEY']
-    public_key = os.environ['BITCOIN_AVERAGE_PUBLIC_KEY']
-    client = RestfulClient(secret_key, public_key)
 
-    @classmethod
-    def symbols(cls) -> List[str]:
+    def __init__(self, secret_key, public_key):
+        self.client = RestfulClient(secret_key, public_key)
+
+    def symbols(self) -> List[str]:
         """返回支持的加密货币列表"""
-        symbols = cls.client.all_symbols()
+        symbols = self.client.all_symbols()
         return list(set(symbols['crypto']['symbols']))
 
-    @classmethod
-    def historical_data(cls, symbol: str, start_day: datetime.datetime, end_day: datetime.datetime) -> List[Symbol]:
+    def historical_data(self, symbol: str, start_day: datetime.datetime, end_day: datetime.datetime) -> List[Symbol]:
         """返回支持的加密货币列表"""
-        currency = cls.get_currency_from_symbol(symbol)
-        all_historical_data = cls.client.history_global(symbol)
+        currency = self.get_currency_from_symbol(symbol)
+        all_historical_data = self.client.history_global(symbol)
         historical_data = []
         for doc in all_historical_data:
             symbol_time = datetime.datetime.strptime(doc['time'], "%Y-%m-%d %H:%M:%S")
@@ -39,6 +35,5 @@ class BitcoinAverage(AbstractDataSource):
                 historical_data.append(symbol_obj)
         return historical_data
 
-    @classmethod
-    def get_currency_from_symbol(cls, symbol):
+    def get_currency_from_symbol(self, symbol):
         return symbol[3:]
